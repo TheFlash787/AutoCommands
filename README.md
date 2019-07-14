@@ -48,6 +48,3 @@ startup {
 
 ### Support
 If you ever need support with regards to our plugin(s), please don't hesitate to contact us directly on our community Discord server. You can find it here: https://discord.gg/tKKeTdc
-
-
-![](https://storage.modrealms.net/mobpression/cow.png)
