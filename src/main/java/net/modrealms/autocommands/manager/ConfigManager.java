@@ -25,12 +25,13 @@ public class ConfigManager {
         update();
     }
 
-    private void update(){
+    public void update(){
         try{
             CommentedConfigurationNode node = configurationLoader.load(options);
             MainConfiguration cfg = node.getValue(TypeToken.of(MainConfiguration.class), new MainConfiguration());
             configurationLoader.save(node);
             mainConfiguration = cfg;
+            autoCommands.getLogger().info("Updated the configuration");
         } catch (IOException | ObjectMappingException ex){
             ex.printStackTrace();
         }

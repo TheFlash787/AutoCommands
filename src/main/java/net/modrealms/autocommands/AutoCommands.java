@@ -3,15 +3,18 @@ package net.modrealms.autocommands;
 import com.google.inject.Inject;
 import lombok.Getter;
 import net.modrealms.autocommands.config.MainConfiguration;
+import net.modrealms.autocommands.event.PlayerConnectionEvent;
 import net.modrealms.autocommands.manager.ConfigManager;
 import net.modrealms.autocommands.tasks.DelayTask;
 import net.modrealms.autocommands.tasks.IntervalTask;
 import net.modrealms.autocommands.tasks.StartupTask;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -45,6 +48,8 @@ public class AutoCommands {
         /* Setting up configuration */
         this.configManager = new ConfigManager(loader);
 
+        Sponge.getEventManager().registerListeners(this, new PlayerConnectionEvent());
+
         /* Execute the startup tasks */
         if(MainConfiguration.Startup.enabled){
             Task.builder().execute(new StartupTask()).submit(this);
@@ -57,13 +62,14 @@ public class AutoCommands {
 
         /* Start the interval tasks if used */
         if(MainConfiguration.Interval.enabled){
-            Task.builder().interval(MainConfiguration.Interval.interval, TimeUnit.MINUTES).execute(new IntervalTask()).submit(this);
+            Task.builder().interval(MainConfiguration.Interval.interval, TimeUnit.MINUTES).delay(MainConfiguration.Interval.runBeforeInterval ? 0 : MainConfiguration.Interval.interval, TimeUnit.MINUTES).execute(new IntervalTask()).submit(this);
         }
     }
 
     @Listener
-    public void onServerStop(GameStoppingServerEvent event) {
-
+    public void onServerReload(GameReloadEvent event) {
+        this.getConfigManager().update();
+        this.logger.info("Reloaded the plugin.");
     }
 
     public static AutoCommands getInstance(){
