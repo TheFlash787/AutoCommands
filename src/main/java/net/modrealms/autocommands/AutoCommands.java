@@ -7,9 +7,11 @@ import net.modrealms.autocommands.event.PlayerConnectionEvent;
 import net.modrealms.autocommands.manager.ConfigManager;
 import net.modrealms.autocommands.tasks.DelayTask;
 import net.modrealms.autocommands.tasks.IntervalTask;
+import net.modrealms.autocommands.tasks.NewIntervalCheckTask;
 import net.modrealms.autocommands.tasks.StartupTask;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
@@ -23,7 +25,6 @@ import sun.applet.Main;
 
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 @Plugin(id = "autocommands", name = "AutoCommands", authors = "TheFlash787")
 public class AutoCommands {
@@ -64,6 +65,8 @@ public class AutoCommands {
         if(MainConfiguration.Interval.enabled){
             Task.builder().interval(MainConfiguration.Interval.interval, TimeUnit.MINUTES).delay(MainConfiguration.Interval.runBeforeInterval ? 0 : MainConfiguration.Interval.interval, TimeUnit.MINUTES).execute(new IntervalTask()).submit(this);
         }
+
+        Task.builder().execute(new NewIntervalCheckTask()).interval(2, TimeUnit.MINUTES).name("interval_checker").submit(AutoCommands.getInstance());
     }
 
     @Listener

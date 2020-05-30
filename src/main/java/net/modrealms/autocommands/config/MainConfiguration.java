@@ -57,12 +57,8 @@ public class MainConfiguration {
     public static class Player {
         @Setting(value = "intervals", comment = "We recommend restarting your server if you applied any changes here. Players who are already online will have old intervals/commands/permissions set!")
         public static List<PermissionInterval> permissionIntervals = new ArrayList<PermissionInterval>(){{
-            add(new PermissionInterval("group.one", 5, new ArrayList<String>(){{
-                add("permission interval command");
-            }}));
-            add(new PermissionInterval("group.two", 10, new ArrayList<String>(){{
-                add("permission interval command");
-            }}));
+            add(new PermissionInterval("group.one", 5));
+            add(new PermissionInterval("group.two", 10));
         }};
 
         @Setting(value = "on-join-commands", comment = "These commands will be run for all players upon login, as their player, and will respect permission plugins")

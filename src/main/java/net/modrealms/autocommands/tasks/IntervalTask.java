@@ -39,12 +39,16 @@ public class IntervalTask implements Consumer<Task> {
                 /* If a player is specified and is online, run the player-commands and permission-commands */
                 Player player = playerOptional.get();
                 if(player.hasPermission(permissionInterval.getPermission())){
-                    for(String commands : permissionInterval.getCommands()){
-                        if(commands.isEmpty()) continue;
-                        Sponge.getCommandManager().process(player, commands.replace("/", "").replace("{player}", player.getName()));
+                    for(String command : permissionInterval.getConsoleCommands()){
+                        if(command.isEmpty()) continue;
+                        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command.replace("/", "").replace("{player}", player.getName()));
+                    }
+                    for(String command : permissionInterval.getPlayerCommands()){
+                        if(command.isEmpty()) continue;
+                        Sponge.getCommandManager().process(player, command.replace("/", "").replace("{player}", player.getName()));
                     }
                 } else {
-                    autoCommands.getLogger().info(player.getName() + " no longer has the permission for task " + permissionInterval.getPermission() + " so it has been cancelled.");
+                    //autoCommands.getLogger().info(player.getName() + " no longer has the permission for task " + permissionInterval.getPermission() + " so we've cancelled it.");
                     task.cancel();
                 }
             } else {
